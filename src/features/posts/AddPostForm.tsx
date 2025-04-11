@@ -1,6 +1,5 @@
 import React from 'react'
 import { useAppDispatch } from '../../app/hooks'
-import { nanoid } from '@reduxjs/toolkit'
 import { type Post, postAdded } from './postsSlice'
 
 interface AddPostFormFields extends HTMLFormControlsCollection {
@@ -23,14 +22,8 @@ export const AddPostForm = () => {
         const title = elements.postTitle.value
         const content = elements.postContent.value
 
-        const newPost: Post = {
-            id: nanoid(),
-            title,
-            content
-        }
+        dispatch(postAdded(title, content))
 
-        dispatch(postAdded(newPost))
-        
         console.log('Values: ', {title, content})
 
         e.currentTarget.reset()
