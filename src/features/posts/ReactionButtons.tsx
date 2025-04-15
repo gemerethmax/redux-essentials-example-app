@@ -15,7 +15,7 @@ interface ReactionButtonsProps {
     post: Post
 }
 
-export const ReactionsButtons = ({ post }: ReactionButtonsProps) => {
+export const ReactionButtons = ({ post }: ReactionButtonsProps) => {
     const dispatch = useAppDispatch()
     
     const reactionButtons = Object.entries(reactionEmoji).map(
