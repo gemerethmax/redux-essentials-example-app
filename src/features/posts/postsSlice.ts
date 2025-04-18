@@ -1,6 +1,8 @@
 import {createSlice, PayloadAction, nanoid} from '@reduxjs/toolkit'
+import {client} from '@/api/client'
 
 import type { RootState } from '../../app/store'
+import { createAppAsyncThunk } from '@/app/withTypes'
 
 import { userLoggedOut } from '@/features/auth/authSlice'
 
@@ -27,7 +29,7 @@ type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
 interface PostsState {
     posts: Post[]
-    status: 'idle' | 'pending' | 'succeeded' | 'failed'
+    status: 'idle' | 'pending' | 'succeeded' | 'rejected'
     error: string | null
 }
 
@@ -38,6 +40,12 @@ const initialReactions: Reactions = {
     rocket: 0,
     eyes: 0
 }
+
+export const fetchPosts = createAppAsyncThunk('posts/fetchPosts', async ()=> {
+    const repsonse = await client.get<Post[]>('/fakeApi/posts')
+    return repsonse.data
+})
+
 const initialState: PostsState = {
     posts: [],
     status: 'idle',
@@ -85,9 +93,21 @@ const postsSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(userLoggedOut, (state) => {
+        builder
+            .addCase(userLoggedOut, (state) => {
             return initialState
         })
+            .addCase(fetchPosts.pending, (state, action) => {
+                state.status = 'pending'
+        } )
+            .addCase(fetchPosts.fulfilled, (state, action) => {
+                state.status = 'succeeded'
+                state.posts.push(...action.payload)
+        })
+            .addCase(fetchPosts.rejected, (state, action) => {
+                state.status = 'rejected'
+                state.error = action.error.message ?? 'Unkown Error'           
+             })
     },
     selectors: {
         selectAllPosts: postsState => postsState,
