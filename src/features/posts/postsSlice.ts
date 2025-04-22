@@ -44,7 +44,15 @@ const initialReactions: Reactions = {
 export const fetchPosts = createAppAsyncThunk('posts/fetchPosts', async ()=> {
     const repsonse = await client.get<Post[]>('/fakeApi/posts')
     return repsonse.data
-})
+}, {
+    condition(arg, thunkApi) { 
+        const postsStatus = selectPostsStatus(thunkApi.getState())
+        if (postsStatus !== 'idle') {
+            return false
+        }
+    },
+    },
+)
 
 const initialState: PostsState = {
     posts: [],
