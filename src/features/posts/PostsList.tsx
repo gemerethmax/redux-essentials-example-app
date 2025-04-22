@@ -6,7 +6,7 @@ import { TimeAgo } from '@/components/TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 import React, { useEffect} from 'react'
 
-interface PostsExcerptProps {
+interface PostExcerptProps {
     post: Post
 }
 
